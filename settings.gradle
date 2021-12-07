@@ -1,2 +1,3 @@
+include ':app'
 rootProject.name = "LororDebuger"
-include ':app', ':debuger'
+include ':debuger'
