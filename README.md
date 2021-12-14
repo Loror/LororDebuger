@@ -25,7 +25,7 @@ allprojects {
             BLog.setSaveDir(it.absolutePath + File.separator + "crash" + File.separator)
             FileLogger.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
             FileLogger.clear()
-            AgentCrashHandler.getInstance().init(this)
+            CrashHandler.getInstance().init(this)
         }
         if (Constant.isOther()) {
             ViewService.setOnSelectClick {
