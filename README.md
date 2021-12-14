@@ -17,8 +17,42 @@ allprojects {
 }
 ```
 
-
-## 基础mvvm架构
+* 配置代码
+* Application中
+```
+    private fun initDebuger() {
+        externalCacheDir?.let {
+            BLog.setSaveDir(it.absolutePath + File.separator + "crash" + File.separator)
+            FileLogger.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
+            FileLogger.clear()
+            AgentCrashHandler.getInstance().init(this)
+        }
+        if (Constant.isOther()) {
+            ViewService.setOnSelectClick {
+                stopService(Intent(this, ViewService::class.java))
+                ActivityUtil.finishAll()
+                GlobalScope.launch {
+                    delay(1000)
+                    Process.killProcess(Process.myPid())
+                }
+            }
+            ViewService.setSelect(Constant.ENVIRONMENT.keyList().toArray(arrayOf<String>()))
+            val sensor = SensorManagerUtil(this)
+            sensor.setOnShakeListener {
+                startService(
+                    Intent(
+                        this,
+                        ViewService::class.java
+                    )
+                )
+                sensor.stop()
+            }
+            sensor.start()
+        } else {
+            ViewService.setSelect(arrayOf(BuildConfig.HOST))
+        }
+    }
+```
 
 License
 -------
