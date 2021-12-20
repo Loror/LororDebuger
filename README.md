@@ -20,7 +20,7 @@ allprojects {
 * 配置代码
 * Application中
 ```
-    private fun initDebuger() {
+    private fun initDebugger() {
         externalCacheDir?.let {
             BLog.setSaveDir(it.absolutePath + File.separator + "crash" + File.separator)
             FileLogger.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
