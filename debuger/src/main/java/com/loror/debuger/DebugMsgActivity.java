@@ -8,15 +8,15 @@ import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loror.debuger.utils.ClipUtil;
+
 public class DebugMsgActivity extends Activity {
 
-    private boolean webShow;
+    static String longErrorMsg;
+
     private String errorMsg;
 
-    WebView webView;
-    TextView textView;
-
-    static String longErrorMsg;
+    private  WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +27,9 @@ public class DebugMsgActivity extends Activity {
 
     protected void initView() {
         webView = findViewById(R.id.webView);
-        textView = findViewById(R.id.textView);
+        TextView textView = findViewById(R.id.textView);
         errorMsg = getIntent().getStringExtra("errorMsg");
-        webShow = getIntent().getBooleanExtra("webShow", false);
+        boolean webShow = getIntent().getBooleanExtra("webShow", false);
         setResult(RESULT_OK);
         if (TextUtils.isEmpty(errorMsg)) {
             errorMsg = longErrorMsg;

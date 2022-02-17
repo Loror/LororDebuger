@@ -1,4 +1,4 @@
-package com.loror.debuger;
+package com.loror.debuger.utils;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

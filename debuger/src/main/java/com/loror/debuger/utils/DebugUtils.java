@@ -1,14 +1,13 @@
-package com.loror.debuger;
+package com.loror.debuger.utils;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
-import java.io.BufferedReader;
+import com.loror.debuger.Debug;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,46 +19,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by Loror on 2017/10/23.
  */
-
 public class DebugUtils {
 
-    /**
-     * 读取文件
-     */
-    public static String readFile(File file) {
-        StringBuilder builder = new StringBuilder();
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                builder.append(line);
-                builder.append("\n");
-            }
-            bufferedReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
-    }
+    public static final String FILTER = "loror.new_debug";
 
     /**
      * 获取所有崩溃日志
      */
     public static List<Debug> getAllBugsDesc(Context context) {
-        File dirs = new File(Environment.getExternalStorageDirectory(), "crash");
+        File dirs = new File(BLog.getSaveDir());
         List<Debug> all = new ArrayList<>();
         if (dirs.exists()) {
             File[] files = dirs.listFiles();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss", Locale.CHINA);
             if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isFile()) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().endsWith(".log")) {
                         Debug debug = new Debug();
-                        debug.url = format.format(new Date(files[i].lastModified()));
-                        debug.parmas = files[i].getName();
-                        debug.result = readFile(files[i]);
+                        debug.url = format.format(new Date(file.lastModified()));
+                        debug.parmas = file.getName();
+                        debug.result = FileUtil.readFile(file);
                         all.add(debug);
                     }
                 }
@@ -69,7 +48,7 @@ public class DebugUtils {
         return all;
     }
 
-    private static List<Debug> debugs = new CopyOnWriteArrayList<>();
+    private static final List<Debug> debugs = new CopyOnWriteArrayList<>();
 
     /**
      * 获取所有debug信息
@@ -92,7 +71,7 @@ public class DebugUtils {
                 }
             }
         }
-        context.sendBroadcast(new Intent("new_debug"));
+        context.sendBroadcast(new Intent(FILTER));
     }
 
     /**
@@ -109,7 +88,7 @@ public class DebugUtils {
         debug.result = result;
         debug.tag = context.getClass().getSimpleName();
         debugs.add(0, debug);
-        context.sendBroadcast(new Intent("new_debug"));
+        context.sendBroadcast(new Intent(FILTER));
     }
 
     /**

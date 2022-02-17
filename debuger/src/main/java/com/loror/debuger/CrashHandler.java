@@ -8,6 +8,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.loror.debuger.utils.BLog;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -32,7 +34,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     //程序的Context对象
     private Context mContext;
     //用来存储设备信息和异常信息
-    private final Map<String, String> infos = new HashMap<String, String>();
+    private final Map<String, String> info = new HashMap<String, String>();
 
     /**
      * 保证只有一个CrashHandler实例
@@ -110,7 +112,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         collectDeviceInfo(mContext);
 
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : infos.entrySet()) {
+        for (Map.Entry<String, String> entry : info.entrySet()) {
             sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
         }
 
@@ -141,8 +143,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             if (pi != null) {
                 String versionName = pi.versionName == null ? "null" : pi.versionName;
                 String versionCode = pi.versionCode + "";
-                infos.put("versionName", versionName);
-                infos.put("versionCode", versionCode);
+                info.put("versionName", versionName);
+                info.put("versionCode", versionCode);
             }
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "an error occured when collect package info", e);
@@ -151,7 +153,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                infos.put(field.getName(), field.get(null).toString());
+                info.put(field.getName(), field.get(null).toString());
                 Log.d(TAG, field.getName() + " : " + field.get(null));
             } catch (Exception e) {
                 Log.e(TAG, "an error occured when collect crash info", e);

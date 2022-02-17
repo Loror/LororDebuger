@@ -17,12 +17,11 @@ import java.util.ArrayList;
 /**
  * Created by Loror on 2017/10/23.
  */
-
 public class DebugAdapter extends BaseAdapter {
 
-    private Context context;
-    private DebugDialog debugDialog;
-    private ArrayList<Debug> debugs;
+    private final Context context;
+    private final DebugDialog debugDialog;
+    private final ArrayList<Debug> debugs;
     private int debugType;
 
     public DebugAdapter(Context context, ArrayList<Debug> debugs, DebugDialog debugDialog) {
@@ -51,44 +50,35 @@ public class DebugAdapter extends BaseAdapter {
             holder.ll_code.setVisibility(View.VISIBLE);
         }
         holder.tv_result.setText(TextUtils.isEmpty(debugs.get(position).result) ? "无" : debugs.get(position).result.length() > 150 ? debugs.get(position).result.substring(0, 150) : debugs.get(position).result);
-        holder.tv_url.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                context.startActivity(new Intent(context, DebugMsgActivity.class)
-                        .putExtra("errorMsg", debugs.get(position).url)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                debugDialog.dismiss();
-            }
+        holder.tv_url.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, DebugMsgActivity.class)
+                    .putExtra("errorMsg", debugs.get(position).url)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            debugDialog.dismiss();
         });
-        holder.tv_param.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                context.startActivity(new Intent(context, DebugMsgActivity.class)
-                        .putExtra("errorMsg", debugs.get(position).parmas)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                debugDialog.dismiss();
-            }
+        holder.tv_param.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, DebugMsgActivity.class)
+                    .putExtra("errorMsg", debugs.get(position).parmas)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            debugDialog.dismiss();
         });
-        holder.tv_result.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                JSONObject jsonObject = null;
-                try {
-                    jsonObject = new JSONObject(debugs.get(position).result);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                String errorMsg = debugs.get(position).result;
-                if (errorMsg != null && errorMsg.length() > 300000) {
-                    DebugMsgActivity.longErrorMsg = errorMsg;
-                    errorMsg = null;
-                }
-                context.startActivity(new Intent(context, DebugMsgActivity.class)
-                        .putExtra("errorMsg", errorMsg)
-                        .putExtra("webShow", jsonObject == null)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                debugDialog.dismiss();
+        holder.tv_result.setOnClickListener(v -> {
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(debugs.get(position).result);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            String errorMsg = debugs.get(position).result;
+            if (errorMsg != null && errorMsg.length() > 300000) {
+                DebugMsgActivity.longErrorMsg = errorMsg;
+                errorMsg = null;
+            }
+            context.startActivity(new Intent(context, DebugMsgActivity.class)
+                    .putExtra("errorMsg", errorMsg)
+                    .putExtra("webShow", jsonObject == null)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            debugDialog.dismiss();
         });
     }
 
@@ -121,7 +111,7 @@ public class DebugAdapter extends BaseAdapter {
         return convertView;
     }
 
-    class ViewHolder {
+    static class ViewHolder {
         TextView tv_url;
         TextView tv_param;
         TextView tv_code;

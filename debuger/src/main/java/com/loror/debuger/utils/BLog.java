@@ -1,8 +1,10 @@
-package com.loror.debuger;
+package com.loror.debuger.utils;
 
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.loror.debuger.DebugConfig;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +39,7 @@ public class BLog {
 
     public static String getSaveDir() {
         if (TextUtils.isEmpty(dir)) {
-            return "/sdcard/crash";
+            return DebugConfig.Get.getSaveDir();
         }
         return dir;
     }

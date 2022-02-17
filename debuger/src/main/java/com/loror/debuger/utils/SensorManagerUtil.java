@@ -1,4 +1,4 @@
-package com.loror.debuger;
+package com.loror.debuger.utils;
 
 import android.content.Context;
 import android.hardware.Sensor;
