@@ -21,6 +21,7 @@ public class CmdMsg {
     public static final int TYPE_APIS_R = 10;//接收调试数据
     public static final int TYPE_URL = 11;//开启浏览器
     public static final int TYPE_ENV = 12;//切换环境
+    public static final int TYPE_ALERT = 13;//alert
 
     /**
      * 执行命令
@@ -111,6 +112,10 @@ public class CmdMsg {
                 } catch (Exception e) {
                     UDP.send(fromIP, new Msg(TYPE_RESP, "unknown index", msg.getNumber()));
                 }
+            }
+            break;
+            case TYPE_ALERT: {
+                listener.onAlert(msg.getMessage());
             }
             break;
         }

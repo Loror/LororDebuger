@@ -145,6 +145,15 @@ public class DebugService extends Service {
                 }
 
                 @Override
+                public void onAlert(String message) {
+                    if (!TextUtils.isEmpty(message)) {
+                        handler.post(() -> {
+                            Toast.makeText(DebugService.this, message, Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
+
+                @Override
                 public void onConnect() {
                     Log.e("DEBUG", "onConnect");
                 }

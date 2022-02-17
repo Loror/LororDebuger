@@ -18,4 +18,6 @@ public interface UdpConnectorListener extends ConnectorListener {
     void onUrlOpen(String url);
 
     void onEnv(int select);
+
+    void onAlert(String message);
 }
