@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -118,12 +119,29 @@ public class DebugService extends Service {
 
                 @Override
                 public void onUrlOpen(String url) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Uri content_url = Uri.parse(url);
-                    intent.setData(content_url);
-                    startActivity(intent);
+                    handler.post(() -> {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Uri content_url = Uri.parse(url);
+                        intent.setData(content_url);
+                        startActivity(intent);
+                    });
+                }
+
+                @Override
+                public void onEnv(int select) {
+                    handler.post(() -> {
+                        DebugUtils.saveType(DebugService.this, select);
+                        Toast.makeText(DebugService.this, "环境已切换，请重启app", Toast.LENGTH_SHORT).show();
+                        View.OnClickListener onSelectClick = DebugConfig.Get.getOnSelectClick();
+                        if (onSelectClick != null) {
+                            onSelectClick.onClick(null);
+                        }
+                        if (DebugConfig.Get.isExitWhenSelect()) {
+                            android.os.Process.killProcess(android.os.Process.myPid());
+                        }
+                    });
                 }
 
                 @Override
