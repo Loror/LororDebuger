@@ -21,6 +21,7 @@ import com.loror.debuger.connector.UDP;
 import com.loror.debuger.connector.UdpConnectorListener;
 import com.loror.debuger.utils.DebugUtils;
 import com.loror.debuger.utils.FileUtil;
+import com.loror.debuger.utils.RemoteLog;
 
 import org.json.JSONArray;
 
@@ -108,6 +109,16 @@ public class DebugService extends Service {
                     List<Debug> debugs = DebugUtils.getAllDesc(DebugService.this);
                     for (Debug debug : debugs) {
                         jsonArray.put(debug.toJSONObject());
+                    }
+                    return jsonArray.toString();
+                }
+
+                @Override
+                public String logs() {
+                    JSONArray jsonArray = new JSONArray();
+                    List<String> logs = RemoteLog.Get.pop();
+                    for (String l : logs) {
+                        jsonArray.put(l);
                     }
                     return jsonArray.toString();
                 }

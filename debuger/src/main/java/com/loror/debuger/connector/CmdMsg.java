@@ -22,6 +22,8 @@ public class CmdMsg {
     public static final int TYPE_URL = 11;//开启浏览器
     public static final int TYPE_ENV = 12;//切换环境
     public static final int TYPE_ALERT = 13;//alert
+    public static final int TYPE_LOGS = 14;//获取远程log
+    public static final int TYPE_LOGS_R = 15;//获取远程log响应
 
     /**
      * 执行命令
@@ -116,6 +118,10 @@ public class CmdMsg {
             break;
             case TYPE_ALERT: {
                 listener.onAlert(msg.getMessage());
+            }
+            break;
+            case TYPE_LOGS: {
+                UDP.send(fromIP, new Msg(TYPE_LOGS_R, listener.logs(), msg.getNumber(), true));
             }
             break;
         }
