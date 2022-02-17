@@ -20,8 +20,6 @@ public class UDP {
 
     private static final String TAG = "UDP";
 
-    public static int PORT = 20685;
-
     private static DatagramSocket socket;
     private static ExecutorService server;
 
@@ -47,7 +45,7 @@ public class UDP {
             try {
                 InetAddress address = InetAddress.getByName(sendIp);
                 byte[] temp = Code.code(message, DebugConfig.Get.getKey());
-                DatagramPacket dp = new DatagramPacket(temp, temp.length, address, PORT);
+                DatagramPacket dp = new DatagramPacket(temp, temp.length, address, DebugConfig.Get.getPort());
                 socket.send(dp);
                 if (success != null) {
                     success.run();
@@ -75,7 +73,7 @@ public class UDP {
         final byte[] temp = new byte[1024 * 50];
         final DatagramPacket dp = new DatagramPacket(temp, temp.length);
         try {
-            socket = new DatagramSocket(PORT);
+            socket = new DatagramSocket(DebugConfig.Get.getPort());
             listener.onConnect();
         } catch (SocketException e) {
             Log.e(TAG, "open udp fail:", e);

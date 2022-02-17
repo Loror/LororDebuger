@@ -16,8 +16,6 @@ public class TCP {
 
     private static final String TAG = "TCP";
 
-    public static int PORT = 20466;
-
     private static ServerSocket socket;
     private static ExecutorService server;
 
@@ -43,7 +41,7 @@ public class TCP {
         }
         server.execute(() -> {
             try {
-                Socket socket = new Socket(ip, PORT);
+                Socket socket = new Socket(ip, DebugConfig.Get.getPort() + 1);
                 byte[] temp = new byte[1024 * 30];
                 int total;
                 OutputStream outputStream = socket.getOutputStream();
@@ -67,7 +65,7 @@ public class TCP {
             return;
         }
         try {
-            socket = new ServerSocket(PORT);
+            socket = new ServerSocket(DebugConfig.Get.getPort() + 1);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "open tcp fail:", e);

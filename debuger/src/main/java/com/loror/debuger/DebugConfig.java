@@ -9,6 +9,7 @@ import android.view.View;
 public class DebugConfig {
 
     private static boolean allowRemote;
+    private static int port = 20685;
     private static int icon;
     private static boolean exitWhenSelect;
     private static View.OnClickListener onSelectClick;
@@ -21,6 +22,10 @@ public class DebugConfig {
 
     public static void setAllowRemote(boolean allowRemote) {
         DebugConfig.allowRemote = allowRemote;
+    }
+
+    public static void setPort(int port) {
+        DebugConfig.port = port;
     }
 
     public static void setIcon(int icon) {
@@ -63,6 +68,10 @@ public class DebugConfig {
 
         public static boolean isAllowRemote() {
             return allowRemote;
+        }
+
+        public static int getPort() {
+            return port;
         }
 
         public static int getIcon() {
