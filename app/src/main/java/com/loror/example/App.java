@@ -3,6 +3,7 @@ package com.loror.example;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Environment;
 
 import com.loror.debuger.DebugConfig;
 import com.loror.debuger.utils.BLog;
@@ -36,5 +37,13 @@ public class App extends Application {
             sensor.stop();
         });
         sensor.start();
+        DebugService.setOnOpenFile(file -> {
+            if (file.getName().endsWith(".apk")) {
+                File down = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                if (FileUtils.copy(file, new File(down, file.getName()))) {
+                    FileUtils.goInstall(this, new File(down, file.getName()));
+                }
+            }
+        });
     }
 }
