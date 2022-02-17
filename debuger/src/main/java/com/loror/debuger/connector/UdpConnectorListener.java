@@ -12,4 +12,8 @@ public interface UdpConnectorListener extends ConnectorListener {
     void onFileOpen(File file);
 
     String apis();
+
+    void onDevice(String ip, String info);
+
+    void onUrlOpen(String url);
 }

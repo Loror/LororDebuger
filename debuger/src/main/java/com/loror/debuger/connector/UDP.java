@@ -20,7 +20,7 @@ public class UDP {
 
     private static final String TAG = "UDP";
 
-    public static int PORT = 20467;
+    public static int PORT = 20685;
 
     private static DatagramSocket socket;
     private static ExecutorService server;

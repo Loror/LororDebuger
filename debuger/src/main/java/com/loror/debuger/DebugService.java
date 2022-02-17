@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -111,6 +112,21 @@ public class DebugService extends Service {
                 }
 
                 @Override
+                public void onDevice(String ip, String info) {
+
+                }
+
+                @Override
+                public void onUrlOpen(String url) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Uri content_url = Uri.parse(url);
+                    intent.setData(content_url);
+                    startActivity(intent);
+                }
+
+                @Override
                 public void onConnect() {
                     Log.e("DEBUG", "onConnect");
                 }
@@ -169,7 +185,6 @@ public class DebugService extends Service {
         } catch (Throwable e) {
             e.printStackTrace();
             Toast.makeText(this, "请先开启系统弹窗权限", Toast.LENGTH_SHORT).show();
-            stopSelf();
         }
     }
 

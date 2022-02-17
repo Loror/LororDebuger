@@ -19,6 +19,7 @@ public class CmdMsg {
     public static final int TYPE_REC_R = 8;//接收响应
     public static final int TYPE_APIS = 9;//调试
     public static final int TYPE_APIS_R = 10;//接收调试数据
+    public static final int TYPE_URL = 11;//开启浏览器
 
     /**
      * 执行命令
@@ -44,6 +45,10 @@ public class CmdMsg {
                         }
                     }
                 }
+            }
+            break;
+            case TYPE_INFO_R: {
+                listener.onDevice(fromIP, msg.getMessage());
             }
             break;
             case TYPE_SEND: {
@@ -92,6 +97,10 @@ public class CmdMsg {
             break;
             case TYPE_APIS: {
                 UDP.send(fromIP, new Msg(TYPE_APIS_R, listener.apis(), msg.getNumber()));
+            }
+            break;
+            case TYPE_URL: {
+                listener.onUrlOpen(msg.getMessage());
             }
             break;
         }
