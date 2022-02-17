@@ -1,5 +1,6 @@
 package com.loror.debuger.connector;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,15 +9,21 @@ public class Msg {
     private int type;
     private String message;
     private int number;
+    private final boolean keepMessage;
 
     public Msg() {
-
+        keepMessage = false;
     }
 
     public Msg(int type, String message, int number) {
+        this(type, message, number, false);
+    }
+
+    public Msg(int type, String message, int number, boolean keepMessage) {
         this.type = type;
         this.message = message;
         this.number = number;
+        this.keepMessage = keepMessage;
     }
 
     public int getType() {
@@ -43,12 +50,20 @@ public class Msg {
         this.number = number;
     }
 
+    @NotNull
     @Override
     public String toString() {
-        return "{\"type\":" + type +
-                ",\"message\":\"" + message + '\"' +
-                ",\"number\":" + number +
-                '}';
+        if (keepMessage) {
+            return "{\"type\":" + type +
+                    ",\"message\":" + message +
+                    ",\"number\":" + number +
+                    '}';
+        } else {
+            return "{\"type\":" + type +
+                    ",\"message\":\"" + message + '\"' +
+                    ",\"number\":" + number +
+                    '}';
+        }
     }
 
     public static Msg fromJson(String json) {

@@ -96,7 +96,7 @@ public class CmdMsg {
             }
             break;
             case TYPE_APIS: {
-                UDP.send(fromIP, new Msg(TYPE_APIS_R, listener.apis(), msg.getNumber()));
+                UDP.send(fromIP, new Msg(TYPE_APIS_R, listener.apis(), msg.getNumber(), true));
             }
             break;
             case TYPE_URL: {
