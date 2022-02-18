@@ -95,7 +95,11 @@ public class UDP {
                     continue;
                 }
                 server.execute(() -> {
-                    CmdMsg.cmd(fromIP, ms, listener);
+                    try {
+                        CmdMsg.cmd(fromIP, ms, listener);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
             }
         } catch (Exception e) {

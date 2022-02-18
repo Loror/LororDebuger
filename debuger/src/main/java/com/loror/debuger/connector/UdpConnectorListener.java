@@ -13,7 +13,7 @@ public interface UdpConnectorListener extends ConnectorListener {
 
     String apis();
 
-    String logs();
+    String cmd(String cmd);
 
     void onDevice(String ip, String info);
 

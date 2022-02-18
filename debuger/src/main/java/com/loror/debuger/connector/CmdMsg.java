@@ -1,29 +1,37 @@
 package com.loror.debuger.connector;
 
+import android.text.TextUtils;
+
 import com.loror.debuger.DebugConfig;
+import com.loror.debuger.utils.RemoteLog;
+
+import org.json.JSONArray;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class CmdMsg {
 
     public static final int TYPE_RESP = 0;//响应信息
     public static final int TYPE_INFO = 1;//获取设备信息
     public static final int TYPE_INFO_R = 2;//设备信息
-    public static final int TYPE_RCMD = 3;//资源操作
-    public static final int TYPE_RCMD_R = 4;//资源操作响应
-    public static final int TYPE_SEND = 5;//发送数据
-    public static final int TYPE_SEND_R = 6;//发送响应 0 禁止 1 允许
-    public static final int TYPE_REC = 7;//接收数据
-    public static final int TYPE_REC_R = 8;//接收响应
-    public static final int TYPE_APIS = 9;//调试
-    public static final int TYPE_APIS_R = 10;//接收调试数据
-    public static final int TYPE_URL = 11;//开启浏览器
-    public static final int TYPE_ENV = 12;//切换环境
-    public static final int TYPE_ALERT = 13;//alert
-    public static final int TYPE_LOGS = 14;//获取远程log
-    public static final int TYPE_LOGS_R = 15;//获取远程log响应
+    public static final int TYPE_CMD = 3;//操作
+    public static final int TYPE_CMD_R = 4;//操作响应
+    public static final int TYPE_RCMD = 5;//资源操作
+    public static final int TYPE_RCMD_R = 6;//资源操作响应
+    public static final int TYPE_SEND = 7;//发送数据
+    public static final int TYPE_SEND_R = 8;//发送响应 0 禁止 1 允许
+    public static final int TYPE_REC = 9;//接收数据
+    public static final int TYPE_REC_R = 10;//接收响应
+    public static final int TYPE_APIS = 11;//调试
+    public static final int TYPE_APIS_R = 12;//接收调试数据
+    public static final int TYPE_URL = 13;//开启浏览器
+    public static final int TYPE_ENV = 14;//切换环境
+    public static final int TYPE_ALERT = 15;//alert
+    public static final int TYPE_LOGS = 16;//获取远程log
+    public static final int TYPE_LOGS_R = 17;//获取远程log响应
 
     /**
      * 执行命令
@@ -31,9 +39,16 @@ public class CmdMsg {
     public static void cmd(String fromIP, Msg msg, UdpConnectorListener listener) {
         switch (msg.getType()) {
             case TYPE_INFO: {
-                UDP.send(fromIP, new Msg(TYPE_INFO_R, "{\\\"version\\\":\\\"" + DebugConfig.Get.getVersion()
-                        + "\\\",\\\"device\\\":\\\"" + DebugConfig.Get.getDevice()
-                        + "\\\",\\\"sdk\\\":" + DebugConfig.Get.getSdk() + "}", msg.getNumber()));
+                UDP.send(fromIP, new Msg(TYPE_INFO_R, "{\"version\":\"" + DebugConfig.Get.getVersion()
+                        + "\",\"device\":\"" + DebugConfig.Get.getDevice()
+                        + "\",\"sdk\":" + DebugConfig.Get.getSdk() + "}", msg.getNumber(), true));
+            }
+            break;
+            case TYPE_CMD: {
+                String res = listener.cmd(msg.getMessage());
+                if (!TextUtils.isEmpty(res)) {
+                    UDP.send(fromIP, new Msg(TYPE_CMD_R, res, msg.getNumber()));
+                }
             }
             break;
             case TYPE_RCMD: {
@@ -121,7 +136,16 @@ public class CmdMsg {
             }
             break;
             case TYPE_LOGS: {
-                UDP.send(fromIP, new Msg(TYPE_LOGS_R, listener.logs(), msg.getNumber(), true));
+                if ("bind".equals(msg.getMessage())) {
+                    RemoteLog.setOnLog(log -> {
+                        JSONArray jsonArray = new JSONArray();
+                        jsonArray.put(log);
+                        UDP.send(fromIP, new Msg(TYPE_LOGS_R, jsonArray.toString(), msg.getNumber(), true));
+                    });
+                } else {
+                    RemoteLog.setOnLog(null);
+                }
+                UDP.send(fromIP, new Msg(TYPE_LOGS_R, RemoteLog.Get.popToString(), msg.getNumber(), true));
             }
             break;
         }
@@ -130,7 +154,7 @@ public class CmdMsg {
     /**
      * 执行命令
      */
-    private static void rsCmd(String fromIP, String cmd, int number, UdpConnectorListener listener) throws Throwable {
+    private static void rsCmd(String fromIP, String cmd, int number, UdpConnectorListener listener) {
         String[] args = cmd.split(" ");
         switch (args[0]) {
             case "ls": {
