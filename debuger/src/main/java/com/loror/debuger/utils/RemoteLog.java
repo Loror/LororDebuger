@@ -15,6 +15,7 @@ import java.util.Locale;
  */
 public class RemoteLog {
 
+    private static final int LOG_MAX_LENGTH = 2000;
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     private static final List<String> logs = new ArrayList<>();
     private static OnLog onLog;
@@ -32,18 +33,56 @@ public class RemoteLog {
     }
 
     public static void d(String tag, String message) {
-        Log.d(tag, message);
+        log("D", tag, message);
         append(tag + ":" + message);
     }
 
     public static void e(String tag, String message) {
-        Log.e(tag, message);
+        log("E", tag, message);
         append(tag + ":" + message);
     }
 
     public static void e(String tag, String message, Throwable e) {
-        Log.e(tag, message, e);
-        append(tag + ":" + message + " " + Log.getStackTraceString(e));
+        message = message + " " + Log.getStackTraceString(e);
+        log("E", tag, message);
+        append(tag + ":" + message);
+    }
+
+    private static void log(String level, String tag, String message) {
+        if (message == null) {
+            return;
+        }
+        if (message.length() < LOG_MAX_LENGTH) {
+            switch (level) {
+                case "E":
+                    Log.e(tag, message);
+                    break;
+                case "D":
+                    Log.d(tag, message);
+                    break;
+            }
+        } else {
+            int strLength = message.length();
+            int start = 0;
+            int end = LOG_MAX_LENGTH;
+            for (int i = 0; i < 500; i++) {
+                if (strLength > end) {
+                    Log.e(tag + i, message.substring(start, end));
+                    start = end;
+                    end = end + LOG_MAX_LENGTH;
+                } else {
+                    switch (level) {
+                        case "E":
+                            Log.e(tag + i, message.substring(start, strLength));
+                            break;
+                        case "D":
+                            Log.d(tag + i, message.substring(start, strLength));
+                            break;
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     private static void append(String log) {
