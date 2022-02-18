@@ -162,13 +162,13 @@ public class CmdMsg {
                 StringBuilder builder = new StringBuilder("[");
                 assert files != null;
                 for (File f : files) {
-                    builder.append("\\\"").append(f.getName()).append("\\\",");
+                    builder.append("\"").append(f.getName()).append("\",");
                 }
                 if (builder.length() > 1) {
                     builder.deleteCharAt(builder.length() - 1);
                 }
                 builder.append("]");
-                UDP.send(fromIP, new Msg(TYPE_RCMD_R, builder.toString(), number));
+                UDP.send(fromIP, new Msg(TYPE_RCMD_R, builder.toString(), number, true));
             }
             break;
             case "pwd": {
