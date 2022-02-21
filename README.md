@@ -23,12 +23,11 @@ allprojects {
     private fun initDebugger() {
         externalCacheDir?.let {
             DebugConfig.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
-            BLog.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
             FileLogger.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
             FileLogger.clear()
-            ErpCrashHandler.getInstance().init(this)
+            CrashHandler.getInstance().init(this)
         }
-        DebugConfig.setPort(DebugConfig.Get.getPort() + 4)
+        DebugConfig.setPort(DebugConfig.Get.getPort())
         DebugConfig.setAllowRemote(true)
         DebugConfig.setDevice(Build.DEVICE)
         DebugConfig.setSdk(Build.VERSION.SDK_INT)
