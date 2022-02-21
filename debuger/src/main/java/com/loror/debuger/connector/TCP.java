@@ -111,10 +111,12 @@ public class TCP {
      * 启动TCP
      */
     public static synchronized void start(String name, ConnectorListener listener) {
-        if (server != null) {
+        if (server == null) {
+            server = Executors.newFixedThreadPool(1);
+        }
+        if (socket != null) {
             return;
         }
-        server = Executors.newFixedThreadPool(1);
         new Thread(() -> openService(name, listener)).start();
     }
 
