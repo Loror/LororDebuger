@@ -22,35 +22,47 @@ allprojects {
 ```
     private fun initDebugger() {
         externalCacheDir?.let {
-            BLog.setSaveDir(it.absolutePath + File.separator + "crash" + File.separator)
+            DebugConfig.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
+            BLog.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
             FileLogger.setSaveDir(it.absolutePath + File.separator + "log" + File.separator)
             FileLogger.clear()
-            CrashHandler.getInstance().init(this)
+            ErpCrashHandler.getInstance().init(this)
         }
-        if (Constant.isOther()) {
-            ViewService.setOnSelectClick {
-                stopService(Intent(this, ViewService::class.java))
-                ActivityUtil.finishAll()
-                GlobalScope.launch {
-                    delay(1000)
-                    Process.killProcess(Process.myPid())
+        DebugConfig.setPort(DebugConfig.Get.getPort() + 4)
+        DebugConfig.setAllowRemote(true)
+        DebugConfig.setDevice(Build.DEVICE)
+        DebugConfig.setSdk(Build.VERSION.SDK_INT)
+        DebugConfig.setVersion(BuildConfig.VERSION_NAME)
+        DebugConfig.setOnCmdListener(object : OnCmdListener {
+            override fun onCmd(handler: CmdHandler) {}
+            override fun openFile(file: File) {
+                RemoteLog.e("DEBUG", "rec open file " + file.name)
+                if (file.name.endsWith(".apk")) {
+                    val down = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                    if (FileUtils.copy(file, File(down, file.name))) {
+                        FileUtils.goInstall(this@App, File(down, file.name))
+                    }
                 }
             }
-            ViewService.setSelect(Constant.ENVIRONMENT.keyList().toArray(arrayOf<String>()))
-            val sensor = SensorManagerUtil(this)
-            sensor.setOnShakeListener {
-                startService(
-                    Intent(
-                        this,
-                        ViewService::class.java
-                    )
-                )
-                sensor.stop()
+        })
+        DebugConfig.setOnSelectClick {
+            SharedPreferenceUtil.remove(SharedPreferenceUtil.AUTHORIZATION)
+            SharedPreferenceUtil.remove(SharedPreferenceUtil.LOG_FINISH)
+            StoreInfoUtil.clear()
+            stopService(Intent(this, DebugService::class.java))
+            ActivityUtil.finishAll()
+            GlobalScope.launch {
+                delay(1000)
+                Process.killProcess(Process.myPid())
             }
-            sensor.start()
-        } else {
-            ViewService.setSelect(arrayOf(BuildConfig.HOST))
         }
+        DebugConfig.setSelect(Constant.ENVIRONMENT.keyList().toArray(arrayOf<String>()))
+        val sensor = SensorManagerUtil(this)
+        sensor.setOnShakeListener {
+            DebugService.showIcon(this)
+            sensor.stop()
+        }
+        sensor.start()
     }
 ```
 
