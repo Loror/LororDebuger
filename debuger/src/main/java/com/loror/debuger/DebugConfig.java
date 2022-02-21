@@ -19,6 +19,7 @@ public class DebugConfig {
     private static int sdk = 9;
     private static String saveDir = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static String key = "lororDebuger";
+    private static OnCmdListener onCmdListener;
 
     public static void setAllowRemote(boolean allowRemote) {
         DebugConfig.allowRemote = allowRemote;
@@ -62,6 +63,10 @@ public class DebugConfig {
 
     public static void setKey(String key) {
         DebugConfig.key = key;
+    }
+
+    public static void setOnCmdListener(OnCmdListener onCmdListener) {
+        DebugConfig.onCmdListener = onCmdListener;
     }
 
     public static class Get {
@@ -108,6 +113,10 @@ public class DebugConfig {
 
         public static String getKey() {
             return key;
+        }
+
+        public static OnCmdListener getOnCmdListener() {
+            return onCmdListener;
         }
     }
 }

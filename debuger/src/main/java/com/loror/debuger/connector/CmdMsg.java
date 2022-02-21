@@ -6,6 +6,8 @@ import com.loror.debuger.DebugConfig;
 import com.loror.debuger.utils.RemoteLog;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +46,7 @@ public class CmdMsg {
             }
             break;
             case TYPE_CMD: {
-                String res = listener.cmd(msg.getMessage());
+                String res = listener.cmd(fromIP, msg.getMessage(), msg.getNumber());
                 if (!TextUtils.isEmpty(res)) {
                     UDP.send(fromIP, new Msg(TYPE_CMD_R, res, msg.getNumber()));
                 }
@@ -159,8 +161,26 @@ public class CmdMsg {
             case "ls": {
                 File dir = new File(DebugConfig.Get.getSaveDir());
                 File[] files = dir.listFiles();
-                StringBuilder builder = new StringBuilder("[");
                 assert files != null;
+                if (args.length >= 2) {
+                    String name = cmd.substring(args[0].length() + 1);
+                    if ("-d".equals(name)) {
+                        JSONArray array = new JSONArray();
+                        for (File f : files) {
+                            JSONObject object = new JSONObject();
+                            try {
+                                object.put("type", f.isDirectory() ? "dir" : "file");
+                                object.put("name", f.getName());
+                                array.put(object);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        UDP.send(fromIP, new Msg(TYPE_RCMD_R, array.toString(), number, true));
+                        break;
+                    }
+                }
+                StringBuilder builder = new StringBuilder("[");
                 for (File f : files) {
                     builder.append("\"").append(f.getName()).append("\",");
                 }
@@ -196,6 +216,29 @@ public class CmdMsg {
                         listener.onFileOpen(file);
                     } else {
                         UDP.send(fromIP, new Msg(TYPE_RCMD_R, name + " not exits", number));
+                    }
+                }
+            }
+            break;
+            case "cd": {
+                if (args.length >= 2) {
+                    String name = cmd.substring(args[0].length() + 1);
+                    File dir = new File(DebugConfig.Get.getSaveDir());
+                    if ("..".equals(name)) {
+                        File parent = dir.getParentFile();
+                        if (parent != null) {
+                            DebugConfig.setSaveDir(parent.getAbsolutePath());
+                        }
+                    } else if (name.contains("/")) {
+                        File file = new File(name);
+                        if (file.exists() && file.isDirectory()) {
+                            DebugConfig.setSaveDir(file.getAbsolutePath());
+                        }
+                    } else {
+                        File file = new File(dir, name);
+                        if (file.exists() && file.isDirectory()) {
+                            DebugConfig.setSaveDir(file.getAbsolutePath());
+                        }
                     }
                 }
             }

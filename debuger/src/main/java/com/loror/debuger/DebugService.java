@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.loror.debuger.connector.CmdMsg;
 import com.loror.debuger.connector.UDP;
 import com.loror.debuger.connector.UdpConnectorListener;
 import com.loror.debuger.utils.DebugUtils;
@@ -41,11 +42,6 @@ public class DebugService extends Service {
         }
     };
 
-    public interface OnOpenFile {
-        void openFile(File file);
-    }
-
-    private static OnOpenFile onOpenFile;
     private static final String FILTER = "DebugService.REC";
 
     /**
@@ -53,13 +49,6 @@ public class DebugService extends Service {
      */
     public static void showIcon(Context context) {
         context.sendBroadcast(new Intent(FILTER));
-    }
-
-    /**
-     * 定义开启文件方式
-     */
-    public static void setOnOpenFile(OnOpenFile onOpenFile) {
-        DebugService.onOpenFile = onOpenFile;
     }
 
     @Override
@@ -96,8 +85,9 @@ public class DebugService extends Service {
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             return;
                         }
-                        if (onOpenFile != null) {
-                            onOpenFile.openFile(file);
+                        OnCmdListener listener = DebugConfig.Get.getOnCmdListener();
+                        if (listener != null) {
+                            listener.openFile(file);
                         }
                     });
                 }
@@ -113,10 +103,15 @@ public class DebugService extends Service {
                 }
 
                 @Override
-                public String cmd(String cmd) {
+                public String cmd(String ip, String cmd, int number) {
                     handler.post(() -> {
                         if ("icon".equals(cmd)) {
                             showDebugIcon();
+                        } else {
+                            OnCmdListener listener = DebugConfig.Get.getOnCmdListener();
+                            if (listener != null) {
+                                listener.onCmd(new CmdHandler(ip, CmdMsg.TYPE_CMD_R, number));
+                            }
                         }
                     });
                     return null;

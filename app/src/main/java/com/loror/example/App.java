@@ -5,8 +5,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+import com.loror.debuger.CmdHandler;
 import com.loror.debuger.DebugConfig;
 import com.loror.debuger.CrashHandler;
+import com.loror.debuger.OnCmdListener;
 import com.loror.debuger.utils.SensorManagerUtil;
 import com.loror.debuger.DebugService;
 import com.loror.debugerExample.BuildConfig;
@@ -37,14 +39,23 @@ public class App extends Application {
             sensor.stop();
         });
         sensor.start();
-        DebugService.setOnOpenFile(file -> {
-            Log.e("DEBUG", "open file " + file.getName());
-            if (file.getName().endsWith(".apk")) {
-                File down = new File("sdcard");
-                Log.e("DEBUG", "copy file " + down.getAbsolutePath());
-                if (FileUtils.copy(file, new File(down, file.getName()))) {
-                    Log.e("DEBUG", "copy success");
-                    FileUtils.goInstall(this, new File(down, file.getName()));
+        DebugConfig.setOnCmdListener(new OnCmdListener() {
+
+            @Override
+            public void onCmd(CmdHandler handler) {
+
+            }
+
+            @Override
+            public void openFile(File file) {
+                Log.e("DEBUG", "open file " + file.getName());
+                if (file.getName().endsWith(".apk")) {
+                    File down = new File("sdcard");
+                    Log.e("DEBUG", "copy file " + down.getAbsolutePath());
+                    if (FileUtils.copy(file, new File(down, file.getName()))) {
+                        Log.e("DEBUG", "copy success");
+                        FileUtils.goInstall(App.this, new File(down, file.getName()));
+                    }
                 }
             }
         });
