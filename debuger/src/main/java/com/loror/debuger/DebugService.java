@@ -110,7 +110,7 @@ public class DebugService extends Service {
                         } else {
                             OnCmdListener listener = DebugConfig.Get.getOnCmdListener();
                             if (listener != null) {
-                                listener.onCmd(new CmdHandler(ip, CmdMsg.TYPE_CMD_R, number));
+                                listener.onCmd(new CmdHandler(ip, CmdMsg.TYPE_CMD_R, number, cmd));
                             }
                         }
                     });

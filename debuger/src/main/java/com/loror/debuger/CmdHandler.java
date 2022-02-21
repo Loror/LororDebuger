@@ -8,11 +8,21 @@ public class CmdHandler {
     private final String ip;
     private final int type;
     private final int number;
+    private final String cmd;
 
-    public CmdHandler(String ip, int type, int number) {
+    public CmdHandler(String ip, int type, int number, String cmd) {
         this.ip = ip;
         this.type = type;
         this.number = number;
+        this.cmd = cmd;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getCmd() {
+        return cmd;
     }
 
     /**
