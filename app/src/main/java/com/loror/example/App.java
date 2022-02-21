@@ -2,15 +2,14 @@ package com.loror.example;
 
 import android.app.Application;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import com.loror.debuger.CmdHandler;
-import com.loror.debuger.DebugConfig;
 import com.loror.debuger.CrashHandler;
+import com.loror.debuger.DebugConfig;
+import com.loror.debuger.DebugService;
 import com.loror.debuger.OnCmdListener;
 import com.loror.debuger.utils.SensorManagerUtil;
-import com.loror.debuger.DebugService;
 import com.loror.debugerExample.BuildConfig;
 
 import java.io.File;
