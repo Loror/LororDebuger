@@ -1,4 +1,4 @@
-# Android辅助开发Library-LororUtil
+# Android辅助开发Library-LororDebuger
 
 [![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -45,10 +45,7 @@ allprojects {
             }
         })
         DebugConfig.setOnSelectClick {
-            SharedPreferenceUtil.remove(SharedPreferenceUtil.AUTHORIZATION)
-            SharedPreferenceUtil.remove(SharedPreferenceUtil.LOG_FINISH)
-            StoreInfoUtil.clear()
-            stopService(Intent(this, DebugService::class.java))
+            //在这里清除数据
             ActivityUtil.finishAll()
             GlobalScope.launch {
                 delay(1000)
@@ -62,6 +59,7 @@ allprojects {
             sensor.stop()
         }
         sensor.start()
+        startService(Intent(this, DebugService::class.java))
     }
 ```
 
