@@ -15,6 +15,7 @@ import java.util.Locale;
  */
 public class RemoteLog {
 
+    private static int itemMaxLength = 1000;
     private static final int LOG_MAX_LENGTH = 2000;
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     private static final List<String> logs = new ArrayList<>();
@@ -30,6 +31,10 @@ public class RemoteLog {
     @Deprecated
     public static void setOnLog(OnLog onLog) {
         RemoteLog.onLog = onLog;
+    }
+
+    public static void setItemMaxLength(int itemMaxLength) {
+        RemoteLog.itemMaxLength = itemMaxLength;
     }
 
     public static void d(String tag, String message) {
@@ -98,8 +103,8 @@ public class RemoteLog {
                 if (logs.size() > 5) {
                     logs.remove(0);
                 }
-                if (log.length() > 200) {
-                    log = log.substring(0, 200) + "...";
+                if (log.length() > itemMaxLength) {
+                    log = log.substring(0, itemMaxLength) + "...";
                 }
                 logs.add(time + " " + log);
             }
