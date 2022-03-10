@@ -192,6 +192,13 @@ public class DebugService extends Service {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         int screenWidth = dm.widthPixels;
         int screenHeight = dm.heightPixels;
+        if (floatBall != null && floatBall.getParent() != null) {
+            try {
+                windowManager.removeView(floatBall);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         floatBall = new DebugView(this);
         try {
             try {
