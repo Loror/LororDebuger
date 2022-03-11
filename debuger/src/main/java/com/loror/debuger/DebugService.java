@@ -48,7 +48,9 @@ public class DebugService extends Service {
      * 显示icon
      */
     public static void showIcon(Context context) {
-        context.sendBroadcast(new Intent(FILTER));
+        Intent intent = new Intent(FILTER);
+        intent.setPackage(context.getPackageName());
+        context.sendBroadcast(intent);
     }
 
     @Override
