@@ -6,7 +6,7 @@
 
 ```
 dependencies {
-    implementation 'com.github.Loror:LororDebuger:1.3.0'
+    implementation 'com.github.Loror:LororDebuger:1.3.1'
 }
 
 allprojects {
